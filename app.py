@@ -11,21 +11,25 @@ def home():
     return render_template("index.html") 
     print("!홈페이지로 이동")
 
-#@app.route('/minus')
-#def minus(): 
- #   return render_template("calculator/minus.html")  
+@app.route('/minus')
+def minus():
+    print("➖빼기 연산") 
+    return render_template("calculator/minus.html")  
   #  print("!@홈페이지로 이동")
 
-#@app.route('/plus')
-#def plus(): 
-    #return render_template("calculator/plus.html")
+@app.route('/plus')
+def plus(): 
+    print("➕더하기 연산")
+    return render_template("calculator/plus.html")
 
 @app.route('/mulitiple')
 def mulitiple(): 
+    print("✖️곱하기 연산")
     return render_template("calculator/mulitiple.html")
 
 @app.route('/divide')
-def divide(): 
+def divide():
+    print("➗나누기 연산") 
     return render_template("calculator/divide.html")
 
 
@@ -83,58 +87,59 @@ def login():
         return redirect(url_for('home')) 
     else: 
         print("😒로그인 실패") 
-        return redirect(url_for('auth'))
+        return render_template("auth/logout.html")
     
 
     #form태그 사용
     
-@app.route('/plus', methods=['GET', 'POST'])
-def plus():
-    if request.method == 'POST':
-        try:
-            # 사용자 입력값 받기
-            num1 = request.form.get('num1')
-            num2 = request.form.get('num2')
+@app.route('/plus', methods=['POST'])
+def plus_anwse():
+    num1 = request.form.get('num1')
+    num2 = request.form.get('num2')
 
-            # 입력 값 검증 (숫자인지 확인)
-            if not num1.isdigit() or not num2.isdigit():
-                return "숫자를 입력해주세요.", 400  # 잘못된 입력 처리
 
-            num1, num2 = int(num1), int(num2)
-            result = num1 + num2  # 덧셈 수행
+    num1, num2 = int(num1), int(num2)
+    result = num1 + num2 
+    return render_template('answer/plus.html', num1=num1, num2=num2, result=result)
 
-            # 🔹 결과 페이지로 이동 (answer/plus.html)
-            return render_template('answer/plus.html', num1=num1, num2=num2, result=result)
+@app.route('/minus', methods=['POST'])
+def minus_answer():
 
-        except Exception as e:
-            return f"오류 발생: {str(e)}", 500  # 예외 발생 시 오류 메시지 반환
+    num1 = request.form.get('num1')
+    num2 = request.form.get('num2')
 
-    # GET 요청 시 입력 페이지 렌더링
-    return render_template("calculator/plus.html")
 
-@app.route('/minus', methods=['GET', 'POST'])
-def minus():
-    if request.method == 'POST':
-        try:
-            # 사용자 입력값 받기
-            num1 = request.form.get('num1')
-            num2 = request.form.get('num2')
+    num1, num2 = int(num1), int(num2)
+    result = num1 - num2  
 
-            # 입력 값 검증 (숫자인지 확인)
-            if not num1.isdigit() or not num2.isdigit():
-                return "숫자를 입력해주세요.", 400  # 잘못된 입력 처리
+    return render_template('answer/minus.html', num1=num1, num2=num2, result=result)
 
-            num1, num2 = int(num1), int(num2)
-            result = num1 - num2  # 덧셈 수행
 
-            # 🔹 결과 페이지로 이동 (answer/plus.html)
-            return render_template('answer/minus.html', num1=num1, num2=num2, result=result)
+@app.route("/divide", methods = ['POST'])
+def divide_anwser():
+    num1 = request.form.get("num1")
+    num2 = request.form.get("num2")            
 
-        except Exception as e:
-            return f"오류 발생: {str(e)}", 500  # 예외 발생 시 오류 메시지 반환
 
-    # GET 요청 시 입력 페이지 렌더링
-    return render_template("calculator/minus.html")
+    num1, num2 = int(num1), int(num2)
+    result = num1 / num2
+        
+    return render_template("answer/divide.html", num1=num1, num2=num2, result=result)
+
+ 
+
+
+@app.route("/mulitiple", methods = ['POST'])
+def mulitiple_anwser():
+    num1 = request.form.get("num1")
+    num2 = request.form.get("num2")
+    print("num1", num1)
+    print("num2", num2) 
+
+    num1, num2 = int(num1), int(num2)
+    result = num1 * num2
+
+    return render_template("answer/mulitiple.html", num1=num1, num2=num2, result=result)
 
 
 if __name__ == '__main__':  
