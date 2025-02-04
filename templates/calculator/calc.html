@@ -14,9 +14,10 @@
         <button type="submit" id="calc">결과보기</button>
     </form>
     
+    {% if num3 %}
     <h1>계산 결과</h1>
     <h2>{{ num1 }} {{opcode}} {{ num2 }} = {{ num3 }}</h2>
- 
+    {% endif %}
 
     <a href="/home"><h3>home</h3></a>
 

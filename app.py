@@ -86,6 +86,7 @@ def calc():
         print("opcode:",opcode)
         num1, num2 = int(num1), int(num2)
         
+
         if opcode == "+":
             print("덧셈 실행")
             num3 = num1 + num2 
@@ -104,7 +105,7 @@ def calc():
             
         print (f"{num1} {opcode} {num2} = {num3}")
         return render_template("calculator/calc.html", 
-                            num1=num1, num2=num2, num3=num3, opcode=opcode)
+                            num1=num1, num2=num2, num3=num3, opcode=opcode, )
 
     
 
