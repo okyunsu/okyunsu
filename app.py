@@ -11,27 +11,6 @@ def home():
     return render_template("index.html") 
     print("!홈페이지로 이동")
 
-@app.route('/minus')
-def minus():
-    print("➖빼기 연산") 
-    return render_template("calculator/minus.html")  
-  #  print("!@홈페이지로 이동")
-
-@app.route('/plus')
-def plus(): 
-    print("➕더하기 연산")
-    return render_template("calculator/plus.html")
-
-@app.route('/mulitiple')
-def mulitiple(): 
-    print("✖️곱하기 연산")
-    return render_template("calculator/mulitiple.html")
-
-@app.route('/divide')
-def divide():
-    print("➗나누기 연산") 
-    return render_template("calculator/divide.html")
-
 
 # 📌 재무 분석 및 보고 챗봇 개발발
 @app.route('/finance_visualizer')
@@ -75,7 +54,7 @@ def construction_report_generator():
  
 
 
-@app.route('/login', methods=["post"])
+@app.route('/login', methods=["POST"])
 def login(): 
     print("😊로그인 알고리즘")
     userid = request.form.get('userid')
@@ -92,57 +71,48 @@ def login():
 
     #form태그 사용
     
-@app.route('/plus', methods=['POST'])
-def plus_anwse():
-    num1 = request.form.get('num1')
-    num2 = request.form.get('num2')
 
+@app.route("/calc", methods = ['POST', 'GET'])
+def calc():
+    print("전송된 데이터 방식 :", request.method)
 
-    num1, num2 = int(num1), int(num2)
-    result = num1 + num2 
-    return render_template('answer/plus.html', num1=num1, num2=num2, result=result)
-
-@app.route('/minus', methods=['POST'])
-def minus_answer():
-
-    num1 = request.form.get('num1')
-    num2 = request.form.get('num2')
-
-
-    num1, num2 = int(num1), int(num2)
-    result = num1 - num2  
-
-    return render_template('answer/minus.html', num1=num1, num2=num2, result=result)
-
-
-@app.route("/divide", methods = ['POST'])
-def divide_anwser():
-    num1 = request.form.get("num1")
-    num2 = request.form.get("num2")            
-
-
-    num1, num2 = int(num1), int(num2)
-    result = num1 / num2
+    if request.method == "POST":      
+        print("post로 진입")         
+        num1 = request.form.get("num1")
+        num2 = request.form.get("num2")            
+        opcode = request.form.get("opcode")
+        print("num1:",num1)
+        print("num2:",num2)
+        print("opcode:",opcode)
+        num1, num2 = int(num1), int(num2)
         
-    return render_template("answer/divide.html", num1=num1, num2=num2, result=result)
+        if opcode == "+":
+            print("덧셈 실행")
+            num3 = num1 + num2 
+        elif opcode == "-":
+            print("뺄셈 실행")
+            num3 = num1 - num2          
+        elif opcode == "/":
+            print("나눗셈 실행")
+            num3 = num1 / num2          
+        elif opcode == "*":
+            print("곱셈 실행")
+            num3 = num1 * num2            
+        else:            
+            print("잘못된 입력입니다")
+            
+            
+        print (f"{num1} {opcode} {num2} = {num3}")
+        return render_template("calculator/calc.html", 
+                            num1=num1, num2=num2, num3=num3, opcode=opcode)
 
- 
+    
 
-
-@app.route("/mulitiple", methods = ['POST'])
-def mulitiple_anwser():
-    num1 = request.form.get("num1")
-    num2 = request.form.get("num2")
-    print("num1", num1)
-    print("num2", num2) 
-
-    num1, num2 = int(num1), int(num2)
-    result = num1 * num2
-
-    return render_template("answer/mulitiple.html", num1=num1, num2=num2, result=result)
-
+    else:
+        print("get 방식으로 진입")
+        return render_template("calculator/calc.html")
 
 if __name__ == '__main__':  
    app.run('0.0.0.0',port=5000,debug=True)
 
-app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.config['TEMPLATES_AUTO_RELOAD'] = True  
