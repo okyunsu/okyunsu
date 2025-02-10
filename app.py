@@ -1,15 +1,47 @@
 from flask import Flask, render_template, request, redirect, url_for
+from com.okyunsu.auth.login_controller import LoginController
+from com.okyunsu.auth.login_model import LoginModel
+from com.okyunsu.calc.calc_controller import CalcController
+from com.okyunsu.calc.calc_model import CalcModel
 app = Flask(__name__)
 
 
-@app.route('/')
-def auth(): 
-    return render_template("auth/login.html") 
+
+@app.route( '/' , methods= ["POST", "GET"])
+def login(): 
+    print("😊로그인 알고리즘")
+    if request.method == "POST":   
+        userid = request.form.get('userid')
+        password = request.form.get('password')
+        print("username:", userid)
+        print("password:", password)
+
+
+        login = LoginModel()
+        login.userid = userid
+        login.password = password
+        print(userid, password)
+
+        controller = LoginController()
+        resp: LoginModel = controller.getResult(login)
+
+        return redirect(url_for(resp.result)) 
+
+        
+    else:
+        return render_template("auth/login.html")
+            
+
+
+@app.route('/fail')
+def fail(): 
+    return render_template("auth/logout.html") 
+
 
 @app.route('/home')
 def home(): 
     return render_template("index.html") 
-    print("!홈페이지로 이동")
+
 
 
 # 📌 재무 분석 및 보고 챗봇 개발발
@@ -53,25 +85,6 @@ def construction_report_generator():
 
  
 
-
-@app.route('/login', methods=["POST"])
-def login(): 
-    print("😊로그인 알고리즘")
-    userid = request.form.get('userid')
-    password = request.form.get('password')
-    print("username:", userid)
-    print("password:", password)
-    if userid == "hong" and password == '1234':    
-        print("😀로그인 성공")
-        return redirect(url_for('home')) 
-    else: 
-        print("😒로그인 실패") 
-        return render_template("auth/logout.html")
-    
-
-    #form태그 사용
-    
-
 @app.route("/calc", methods = ['POST', 'GET'])
 def calc():
     print("전송된 데이터 방식 :", request.method)
@@ -84,34 +97,58 @@ def calc():
         print("num1:",num1)
         print("num2:",num2)
         print("opcode:",opcode)
-        num1, num2 = int(num1), int(num2)
+        num1, num2 = int(num1), int(num2) 
         
+        calc = CalcModel()
+        calc.num1 = int(num1)
+        calc.num2 = int(num2)
+        calc.opcode = opcode
 
-        if opcode == "+":
-            print("덧셈 실행")
-            num3 = num1 + num2 
-        elif opcode == "-":
-            print("뺄셈 실행")
-            num3 = num1 - num2          
-        elif opcode == "/":
-            print("나눗셈 실행")
-            num3 = num1 / num2          
-        elif opcode == "*":
-            print("곱셈 실행")
-            num3 = num1 * num2            
-        else:            
-            print("잘못된 입력입니다")
-            
-            
-        print (f"{num1} {opcode} {num2} = {num3}")
+        controller = CalcController()
+        resp: CalcModel = controller.getResult(calc)
+
+        print(f"{resp.num1} {resp.opcode} {resp.num2} = {resp.result}")
+
         return render_template("calculator/calc.html", 
-                            num1=num1, num2=num2, num3=num3, opcode=opcode, )
+                            num1=resp.num1, num2=resp.num2, opcode=resp.opcode, result = resp.result )
 
     
 
     else:
         print("get 방식으로 진입")
         return render_template("calculator/calc.html")
+
+
+
+@app.route("/discount", methods =["GET", "POST"])
+def discount():
+
+    if request.method == "POST":   
+        amount = request.form.get("amount")
+        print("🐈amount:", amount)
+
+        
+
+        return render_template("calculator/discount.html", amount = amount)
+
+    else:
+        return render_template("calculator/discount.html")
+
+
+@app.route("/gugudan", methods =["GET", "POST"])
+def gugudan():
+
+    if request.method == "POST":   
+        number = request.form.get("number")
+        print("number", number)
+  
+        
+
+        return render_template("calculator/gugudan.html", number = number)
+
+    else:
+        return render_template("calculator/gugudan.html")
+
 
 if __name__ == '__main__':  
    app.run('0.0.0.0',port=5000,debug=True)
