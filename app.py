@@ -3,6 +3,8 @@ from com.okyunsu.auth.login_controller import LoginController
 from com.okyunsu.auth.login_model import LoginModel
 from com.okyunsu.calc.calc_controller import CalcController
 from com.okyunsu.calc.calc_model import CalcModel
+from com.okyunsu.calc.discount_controller import DiscountController
+from com.okyunsu.grade.grade_controller import GradeController
 app = Flask(__name__)
 
 
@@ -127,6 +129,8 @@ def discount():
         amount = request.form.get("amount")
         print("🐈amount:", amount)
 
+        controller = DiscountController(amount = amount)
+        
         
 
         return render_template("calculator/discount.html", amount = amount)
@@ -142,12 +146,38 @@ def gugudan():
         number = request.form.get("number")
         print("number", number)
   
-        
-
-        return render_template("calculator/gugudan.html", number = number)
-
+        return render_template("calculator/gugudan.html")
+ 
     else:
         return render_template("calculator/gugudan.html")
+        
+
+@app.route("/grade", methods = ["GET", "POST"])
+def grade():
+
+    if request.method == "POST":
+        name = request.form.get("name")
+        korean = request.form.get("korean")
+        english = request.form.get("english")
+        math = request.form.get("math")
+        society = request.form.get("society")
+        science = request.form.get("science")
+
+        controller = GradeController(name = name, korean = korean, english = english, 
+                               math = math, society = society, science = science)
+
+        resp = controller.GetResult(grade)
+     
+        render_html = '<h3>결과보기</h3>'
+        render_html += f"{resp.name}님의 성적은 {resp.result}입니다.</by>"
+        print(f"🥹 결과", resp.result)
+
+        return render_template("grade/grade.html", render_html = render_html)
+
+    else:
+        return render_template("grade/grade.html")
+
+
 
 
 if __name__ == '__main__':  
